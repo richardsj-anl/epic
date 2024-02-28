@@ -44,3 +44,8 @@ vendor/
 .jekyll-metadata
 .sass-cache/
 _site/
+
+# my addtional
+notes.txt
+install/
+calibrations/
