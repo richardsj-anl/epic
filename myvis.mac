@@ -1,0 +1,59 @@
+# $Id: vis.mac,v 1.4 2010/04/14 18:32:59 lindenle Exp $
+#
+# Macro file for the initialization phase of "exampleN03.cc"
+/control/verbose 2
+/control/saveHistory
+/run/verbose 2
+/vis/scene/create
+#/vis/open OGLSX 1200x900-0+0
+/vis/open OGLSX 1200x900-0+0
+
+# Draw geometry:
+/vis/drawVolume
+#
+# Specify view angle:
+/vis/viewer/set/viewpointVector -1 0 0
+/vis/viewer/set/lightsVector -1 0 0
+#
+# Specify style (surface, wireframe, auxiliary edges,...)
+/vis/viewer/set/style wireframe
+/vis/viewer/set/auxiliaryEdge true
+/vis/viewer/set/lineSegmentsPerCircle 100
+# increase display limit for more complex detectors
+/vis/ogl/set/displayListLimit 500000
+#/vis/viewer/set/viewpointThetaPhi 240 -10
+#/vis/viewer/set/viewpointThetaPhi 270 0 # Side view
+#/vis/viewer/set/viewpointThetaPhi 270 -89.9 # Top-down view
+/vis/viewer/set/viewpointThetaPhi 180 0 # End view
+#/vis/viewer/set/pan [right-increment] [up-increment] [unit] default unit meter
+#/vis/viewer/panTo -0.15 0.
+/vis/viewer/addCutawayPlane 0 0 0 m 1 0 0
+# zooming by 4 makes it fill the display
+#/vis/viewer/zoom 1.5
+# Output an empty detector
+/vis/viewer/flush
+# Draw trajectories at end of event, showing trajectory points as
+# markers of size 2 pixels
+/tracking/storeTrajectory 1
+/vis/scene/add/hits
+/vis/scene/add/trajectories smooth
+/vis/modeling/trajectories/create/drawByCharge
+/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts true
+/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 2
+# For example, select colour by particle ID
+/vis/modeling/trajectories/create/drawByParticleID
+/vis/modeling/trajectories/drawByParticleID-0/set e- yellow
+/vis/modeling/trajectories/drawByParticleID-0/set e+ red
+/vis/modeling/trajectories/drawByParticleID-0/set pi- magenta
+/vis/modeling/trajectories/drawByParticleID-0/set pi+ magenta
+/vis/modeling/trajectories/drawByParticleID-0/set kaon- blue
+/vis/modeling/trajectories/drawByParticleID-0/set kaon+ blue
+/vis/modeling/trajectories/drawByParticleID-0/set proton cyan
+/vis/modeling/trajectories/drawByParticleID-0/set anti_proton cyan
+/vis/modeling/trajectories/drawByParticleID-0/set neutron white
+/vis/modeling/trajectories/drawByParticleID-0/set anti_neutron white
+/vis/modeling/trajectories/drawByParticleID-0/set gamma green
+/vis/scene/endOfEventAction accumulate
+/vis/viewer/flush
+/control/verbose 2
+/run/initialize
