@@ -16,7 +16,6 @@ share/
 
 # Images
 images/*
-grid_fibers.png
 
 accelerator
 eic_ip6
