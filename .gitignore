@@ -14,7 +14,9 @@ build/*
 lib/
 share/
 
+# Images
 images/*
+grid_fibers.png
 
 accelerator
 eic_ip6
@@ -49,3 +51,6 @@ _site/
 notes.txt
 install/
 calibrations/
+
+G4History.macro
+epic_000.eps
