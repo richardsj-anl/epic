@@ -27,7 +27,7 @@
 /vis/viewer/set/viewpointThetaPhi 180 0 # End view
 #/vis/viewer/set/pan [right-increment] [up-increment] [unit] default unit meter
 #/vis/viewer/panTo -0.15 0.
-/vis/viewer/addCutawayPlane 0 0 0 m 1 0 0
+#/vis/viewer/addCutawayPlane 0 0 0 m 1 0 0
 # zooming by 4 makes it fill the display
 #/vis/viewer/zoom 1.5
 # Output an empty detector
