@@ -343,10 +343,10 @@
   </detectors>
 
   <readouts>
-    <readout name="EcalBarrelImagingHits">
+      <!--<readout name="EcalBarrelImagingHits">
       <segmentation type="CartesianGridXY" grid_size_x="0.5 * mm" grid_size_y="0.5 * mm"/>
       <id>system:8,sector:6,layer:4,stave:4,module:8,slice:2,x:32:-16,y:-16</id>
-    </readout>
+      </readout>-->
     <readout name="EcalBabyBarrelScFiHits">
       <segmentation type="CartesianStripZ" strip_size_x="1.0*cm" identifier_x="z"/>
       <id>system:8,sector:6,layer:6,slice:4,grid:10,fiber:16,z:-14</id>
