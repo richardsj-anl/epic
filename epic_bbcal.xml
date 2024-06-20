@@ -106,5 +106,5 @@
     ## Central EM calorimetry
   </documentation>
   <include ref="${DETECTOR_PATH}/compact/ecal/baby_barrel_interlayers.xml"/>
-    
+
 </lccdd>
