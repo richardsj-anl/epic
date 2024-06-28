@@ -263,7 +263,7 @@ void buildFibers_babybcal(Detector& desc, SensitiveDetector& sens, Volume& s_vol
   auto             grids = gridPoints_babybcal(grid_n_phi, grid_dr, s_trd_x1, s_thick, hphi);
   std::vector<int> f_id_count(grids.size(), 0);
   // use layer_number % 2 to add correct shifts for the adjacent fibers at layer boundary
-  auto f_pos = fiberPositions_babybcal(f_radius, f_spacing_x, f_spacing_z, s_trd_x1, s_thick, hphi, (layer_number % 2 == 0));
+  auto f_pos = fiberPositions_babybcal(f_radius, f_spacing_x, f_spacing_z, s_trd_x1, s_thick, hphi, (layer_number % 2 == 0), 0.);
   // a helper struct to speed up searching
   struct Fiber {
     Point pos;
@@ -357,14 +357,13 @@ std::vector<Point> fiberPositions_babybcal(double r, double sx, double sz, doubl
   // stol   - spacing tolerance
 
   std::vector<Point> positions;
-  int                z_layers = floor((trz / 2 - r - stol) / sz); // number of layers that fits in half trapezoid-z
-
+  int                z_layers = floor((trz - stol) / sz);
   double px = 0., pz = 0.;
   int    start_line = shift ? 1 : 0;
 
-  for (int l = -z_layers; l < z_layers + 1; l++) {
+  for (int l = 0; l < z_layers; l++) {
     std::vector<Point> xline;
-    pz           = l * sz;
+    pz           = -trz/2 + sz/2 + l * sz;
     double x_max = trx + (trz / 2. + pz) * tan(phi) - stol; // calculate max x at particular z_pos
     (abs(l) % 2 == start_line) ? px = 0. : px = sx / 2;     // account for spacing/2 shift
 
