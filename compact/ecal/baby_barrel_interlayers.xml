@@ -113,116 +113,6 @@
 
     <comment>
       ---------------------------------------
-      Imaging Layers of Barrel EM Calorimeter
-      ---------------------------------------
-      Silicon (Astropix) readout layers for imaging 3d showers
-    </comment>
-    <!--<detector
-      id="EcalBarrel_ID"
-      name="EcalBarrelImaging"
-      type="epic_EcalBarrelImaging"
-      readout="EcalBarrelImagingHits"
-      calorimeterType="EM_BARREL"
-      vis="EcalBarrelEnvelopeVis"
-      offset="EcalBarrel_Calorimeter_offset">
-      <dimensions numsides="EcalBarrel_SectorRepeat"
-        rmin="EcalBarrel_rmin"
-        z="EcalBarrel_Calorimeter_length"/>
-      <sectors vis="EcalBarrelSectorVis"/>
-
-      <module name="AstroPix_Module"
-              vis="EcalBarrelModuleVis">
-        <module_component name="AstroPix_Chip"
-                          material="Silicon"
-                          width="EcalBarrel_AstroPix_width"
-                          length="EcalBarrel_AstroPix_length"
-                          thickness="EcalBarrel_AstroPix_thickness"
-                          vis="EcalBarrelModuleVis">
-          <slice material="Silicon" thickness="EcalBarrel_SiliconThickness"     vis="EcalBarrelSliceVis" sensitive="yes" limits="cal_limits"/>
-          <slice material="Silicon" thickness="EcalBarrel_ElectronicsThickness" vis="EcalBarrelSliceVis"/>
-          <slice material="Copper" thickness="EcalBarrel_CopperThickness"       vis="EcalBarrelSliceVis"/>
-          <slice material="Kapton" thickness="EcalBarrel_KaptonThickness"       vis="EcalBarrelSliceVis"/>
-          <slice material="Epoxy" thickness="EcalBarrel_EpoxyThickness"         vis="EcalBarrelSliceVis"/>
-        </module_component>
-      </module>
-
-      <support thickness="EcalBarrel_FrontSupportThickness" material="Aluminum" vis="EcalBarrelSupportVis"/>
-
-      <layer repeat="1" vis="EcalBarrelLayerVis"
-             thickness="EcalBarrel_ImagingLayerThickness"
-             space_before="EcalBarrel_FrontSupportThickness">
-        <barrel_envelope
-          inner_r="EcalBarrel_rmin - EcalBarrel_Stave_thickness"
-          outer_r="EcalBarrel_rmin + EcalBarrel_Stave_thickness"
-          z_length="EcalBarrel_Calorimeter_length"/>
-        <frame material="CarbonFiber" fill="Air" thickness="EcalBarrel_CarbonThickness" height="EcalBarrel_ImagingLayerThickness" vis="EcalBarrelSliceVis"/>
-        <stave repeat="6"
-               width="EcalBarrel_Stave_width"
-               length="EcalBarrel_Stave_length"
-               thickness="EcalBarrel_Stave_thickness"
-               angle="EcalBarrel_StaveTilt_angle"
-               module="AstroPix_Module"
-               vis="EcalBarrelStaveVis">
-          <xy_layout
-            dx="EcalBarrel_AstroPix_width + EcalBarrel_AstroPix_margin"
-            dy="EcalBarrel_AstroPix_length + EcalBarrel_AstroPix_margin"
-          />
-        </stave>
-      </layer>
-
-      <layer repeat="1" vis="EcalBarrelLayerVis"
-             thickness="EcalBarrel_ImagingLayerThickness"
-             space_before="EcalBarrel_ScFiLayerThickness + EcalBarrel_SpaceBetween">
-        <frame material="CarbonFiber" fill="Air" thickness="EcalBarrel_CarbonThickness" height="EcalBarrel_ImagingLayerThickness" vis="EcalBarrelSliceVis"/>
-      </layer>
-
-      <layer repeat="2" vis="EcalBarrelLayerVis"
-             thickness="EcalBarrel_ImagingLayerThickness"
-             space_between="EcalBarrel_ScFiLayerThickness + EcalBarrel_SpaceBetween"
-             space_before="EcalBarrel_ScFiLayerThickness + EcalBarrel_SpaceBetween">
-        <frame material="CarbonFiber" fill="Air" thickness="EcalBarrel_CarbonThickness" height="EcalBarrel_ImagingLayerThickness" vis="EcalBarrelSliceVis"/>
-        <stave repeat="6"
-               width="EcalBarrel_Stave_width"
-               length="EcalBarrel_Stave_length"
-               thickness="EcalBarrel_Stave_thickness"
-               angle="-EcalBarrel_StaveTilt_angle"
-               module="AstroPix_Module"
-               vis="EcalBarrelStaveVis">
-          <xy_layout
-            dx="EcalBarrel_AstroPix_width + EcalBarrel_AstroPix_margin"
-            dy="EcalBarrel_AstroPix_length + EcalBarrel_AstroPix_margin"
-          />
-        </stave>
-      </layer>
-
-      <layer repeat="1" vis="EcalBarrelLayerVis"
-             thickness="EcalBarrel_ImagingLayerThickness"
-             space_before="EcalBarrel_ScFiLayerThickness + EcalBarrel_SpaceBetween">
-        <frame material="CarbonFiber" fill="Air" thickness="EcalBarrel_CarbonThickness" height="EcalBarrel_ImagingLayerThickness" vis="EcalBarrelSliceVis"/>
-      </layer>
-
-      <layer repeat="EcalBarrelImagingLayers_num-5" vis="EcalBarrelLayerVis"
-             thickness="EcalBarrel_ImagingLayerThickness"
-             space_between="EcalBarrel_ScFiLayerThickness + EcalBarrel_SpaceBetween"
-             space_before="EcalBarrel_ScFiLayerThickness + EcalBarrel_SpaceBetween">
-        <frame material="CarbonFiber" fill="Air" thickness="EcalBarrel_CarbonThickness" height="EcalBarrel_ImagingLayerThickness" vis="EcalBarrelSliceVis"/>
-        <stave repeat="7"
-               width="EcalBarrel_Stave_width"
-               length="EcalBarrel_Stave_length"
-               thickness="EcalBarrel_Stave_thickness"
-               angle="EcalBarrel_StaveTilt_angle"
-               module="AstroPix_Module"
-               vis="EcalBarrelStaveVis">
-          <xy_layout
-            dx="EcalBarrel_AstroPix_width + EcalBarrel_AstroPix_margin"
-            dy="EcalBarrel_AstroPix_length + EcalBarrel_AstroPix_margin"
-          />
-        </stave>
-      </layer>
-    </detector>-->
-
-    <comment>
-      ---------------------------------------
       Pb/ScFi Layers of Barrel EM Calorimeter
       ---------------------------------------
     </comment>
@@ -239,24 +129,6 @@
         z="58*cm"
         nsectors="1"/>
       <sectors vis="EcalBarrelSectorVis"/>
-      <!--
-      <layer repeat="EcalBarrelImagingLayers_num-1" vis="EcalBarrelLayerVis"
-       space_between="EcalBarrel_ImagingLayerThickness + EcalBarrel_SpaceBetween"
-       space_before="EcalBarrel_FrontSupportThickness + EcalBarrel_ImagingLayerThickness + EcalBarrel_SpaceBetween/2.">
-        <slice material="SciFiPb_PbGlue" thickness="EcalBarrel_RadiatorThickness" vis="EcalBarrelFiberLayerVis">
-          <fiber material="SciFiPb_Scintillator"
-            sensitive="yes"
-            grid_n_phi="5"
-            grid_dr="2*cm"
-            radius="EcalBarrel_FiberRadius"
-            cladding_thickness="EcalBarrel_CladdingThickness"
-            spacing_x="EcalBarrel_FiberXSpacing"
-            spacing_z="EcalBarrel_FiberZSpacing"
-            vis="EcalBarrelFiberLayerVis">
-          </fiber>
-        </slice>
-      </layer>
-      -->
 
       <layer repeat="1" vis="EcalBarrelSupportVis"
           space_before="0">
@@ -266,10 +138,9 @@
         </slice>
       </layer>
 
-      <layer repeat="1" vis="EcalBarrelLayerVis"
-          space_before="0">
+      <layer repeat="1" vis="EcalBarrelLayerVis">
         <slice material="SciFiPb_PbGlue"
-          thickness="2.057*cm"
+          thickness="17*EcalBarrel_FiberZSpacing"
           vis="EcalBarrelFiberLayerVis">
           <fiber material="SciFiPb_Scintillator"
             sensitive="yes"
@@ -284,10 +155,9 @@
         </slice>
       </layer>
 
-      <layer repeat="1" vis="EcalBarrelLayerVis"
-          space_before="0">
+      <layer repeat="1" vis="EcalBarrelLayerVis">
         <slice material="SciFiPb_PbGlue"
-          thickness="2*2.057*cm"
+          thickness="34*EcalBarrel_FiberZSpacing"
           vis="EcalBarrelFiberLayerVis">
           <fiber material="SciFiPb_Scintillator"
             sensitive="yes"
@@ -302,10 +172,9 @@
         </slice>
       </layer>
 
-      <layer repeat="1" vis="EcalBarrelLayerVis"
-          space_before="0">
+      <layer repeat="1" vis="EcalBarrelLayerVis">
         <slice material="SciFiPb_PbGlue"
-          thickness="3*2.057*cm"
+          thickness="50*EcalBarrel_FiberZSpacing"
           vis="EcalBarrelFiberLayerVis">
           <fiber material="SciFiPb_Scintillator"
             sensitive="yes"
@@ -323,7 +192,7 @@
       <layer repeat="1" vis="EcalBarrelLayerVis"
           space_before="0">
         <slice material="SciFiPb_PbGlue"
-          thickness="4*2.464*cm"
+          thickness="81*EcalBarrel_FiberZSpacing"
           vis="EcalBarrelFiberLayerVis">
           <fiber material="SciFiPb_Scintillator"
             sensitive="yes"
@@ -343,10 +212,6 @@
   </detectors>
 
   <readouts>
-      <!--<readout name="EcalBarrelImagingHits">
-      <segmentation type="CartesianGridXY" grid_size_x="0.5 * mm" grid_size_y="0.5 * mm"/>
-      <id>system:8,sector:6,layer:4,stave:4,module:8,slice:2,x:32:-16,y:-16</id>
-      </readout>-->
     <readout name="EcalBabyBarrelScFiHits">
       <segmentation type="CartesianStripZ" strip_size_x="1.0*cm" identifier_x="z"/>
       <id>system:8,sector:6,layer:6,slice:4,grid:10,fiber:16,z:-14</id>
