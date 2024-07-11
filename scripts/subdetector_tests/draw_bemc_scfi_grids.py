@@ -196,6 +196,7 @@ if __name__ == '__main__':
             ax.set_ylim(gr_pos[1] - args.wsize, gr_pos[1] + args.wsize)
 
     # ax.legend(fontsize=22)
+    plt.gca().invert_xaxis()  #!!!!-----added for BabyBCal-----!!!!
     ax.tick_params(labelsize=20, direction='in')
     ax.set_xlabel('X (mm)', fontsize=22)
     ax.set_ylabel('Y (mm)', fontsize=22)

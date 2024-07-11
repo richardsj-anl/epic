@@ -78,7 +78,7 @@ static Ref_t create_detector(Detector& desc, xml_h e, SensitiveDetector sens)
   Volume     motherVol = desc.pickMotherVolume(sdet);
 
   Assembly     envelope(det_name);
-  Transform3D  tr_global = Translation3D(0, 0, offset) * RotationZ(-hphi);  // Changed: hphi -> -hphi
+  Transform3D  tr_global = Translation3D(0, 0, offset) * RotationZ(-hphi-(M_PI/2));  // Changed: hphi -> -hphi -> -hphi - (M_PI/2)
   PlacedVolume env_phv   = motherVol.placeVolume(envelope, tr_global);
   sens.setType("calorimeter");
 
