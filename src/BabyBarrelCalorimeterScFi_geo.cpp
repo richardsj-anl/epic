@@ -62,23 +62,26 @@ void buildSupport_babybcal(Detector& desc, Volume& mother, xml_comp_t x_support,
 static Ref_t create_detector(Detector& desc, xml_h e, SensitiveDetector sens)
 {
   Layering    layering(e);
-  xml_det_t   x_det    = e;
-  Material    air      = desc.air();
-  int         det_id   = x_det.id();
-  double      offset   = x_det.attr<double>(_Unicode(offset));
-  xml_comp_t  x_dim    = x_det.dimensions();
-  int         nsides   = x_dim.numsides();
-  int         nsectors = x_dim.attr<int>(_Unicode(nsectors));
-  double      inner_r  = x_dim.rmin();
-  double      dphi     = (2 * M_PI / nsides);
-  double      hphi     = dphi / 2;
-  std::string det_name = x_det.nameStr();
+  xml_det_t   x_det      = e;
+  Material    air        = desc.air();
+  int         det_id     = x_det.id();
+  double      offsetX    = x_det.attr<double>(_Unicode(offsetX));
+  double      offsetY    = x_det.attr<double>(_Unicode(offsetY));
+  xml_comp_t  x_dim      = x_det.dimensions();
+  int         nsides     = x_dim.numsides();
+  int         nsectors   = x_dim.attr<int>(_Unicode(nsectors));
+  double      inner_r    = x_dim.rmin();
+  double      dphi       = (2 * M_PI / nsides);
+  double      hphi       = dphi / 2;
+  std::string det_name   = x_det.nameStr();
 
   DetElement sdet(det_name, det_id);
   Volume     motherVol = desc.pickMotherVolume(sdet);
 
   Assembly     envelope(det_name);
-  Transform3D  tr_global = Translation3D(0, 0, offset) * RotationZ(-hphi-(M_PI/2));  // Changed: hphi -> -hphi -> -hphi - (M_PI/2)
+  // Changed: hphi -> -hphi -> -hphi - (M_PI/2))
+  // Added: * RotationY(M_PI/2)
+  Transform3D  tr_global = Translation3D(offsetX, offsetY, 0) * RotationZ(-hphi-(M_PI*0.5));  
   PlacedVolume env_phv   = motherVol.placeVolume(envelope, tr_global);
   sens.setType("calorimeter");
 
