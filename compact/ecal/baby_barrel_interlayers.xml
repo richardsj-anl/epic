@@ -109,6 +109,7 @@
   <display>
   </display>
 
+
   <detectors>
 
     <comment>
@@ -123,7 +124,8 @@
       readout="EcalBabyBarrelScFiHits"
       calorimeterType="EM_BARREL"
       vis="EcalBarrelEnvelopeVis"
-      offset="0">
+      offsetX="-935*cm"
+      offsetY="0">
       <dimensions numsides="EcalBarrel_SectorRepeat"
         rmin="65.0*cm"
         z="58*cm"
