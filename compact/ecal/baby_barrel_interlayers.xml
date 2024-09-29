@@ -210,6 +210,33 @@
       </layer>
 
       <support thickness="31.75*mm" material="Aluminum" vis="EcalBarrelSupportVis"/>
+
+      <!--
+          Place additional material below to avoid changing CellID.
+          The radius is calculated as:
+          radius = r_desired - 932
+      -->
+
+      <layer repeat = "1" vis = "EcalBarrelLayerVis" slabTag = "1"
+          material = "PlasticScint"
+          radius = "-832*cm"
+          length = "50*cm" 
+          thickness = "2.5*cm">
+      </layer>
+
+      <layer repeat = "1" vis = "EcalBarrelLayerVis" slabTag = "1"
+          material = "PlasticScint"
+          radius = "-432*cm"
+          length = "50*cm" 
+          thickness = "1.25*cm">
+      </layer>
+
+      <layer repeat = "1" vis = "EcalBarrelLayerVis" slabTag = "1"
+          material = "PlasticScint"
+          radius = "-32*cm"
+          length = "50*cm" 
+          thickness = "1.25*cm">
+      </layer>
     </detector>
   </detectors>
 

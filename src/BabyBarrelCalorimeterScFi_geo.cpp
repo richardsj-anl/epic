@@ -99,12 +99,6 @@ static Ref_t create_detector(Detector& desc, xml_h e, SensitiveDetector sens)
     double tan_hphi = std::tan(hphi);
     double l_dim_y  = x_dim.z() / 2.;
 
-    //===================================================================
-    //================Jared's=Curiosities================================
-    std::cout<< "inner_r = " << inner_r << std::endl;
-    std::cout<< " " << std::endl;
-    //===================================================================
-    //===================================================================
     // Loop over the sets of layer elements in the detector.
     int l_num = 1;
     for (xml_coll_t li(x_det, _U(layer)); li; ++li) {
@@ -113,93 +107,98 @@ static Ref_t create_detector(Detector& desc, xml_h e, SensitiveDetector sens)
       double     l_space_between = getAttrOrDefault(x_layer, _Unicode(space_between), 0.);
       double     l_space_before  = getAttrOrDefault(x_layer, _Unicode(space_before), 0.);
       l_pos_z += l_space_before;
+      // Slab Object tag for placing slabs of material not part of detector.
+      double so_tag = getAttrOrDefault(x_layer, _Unicode(slabTag), 0.);
       // Loop over number of repeats for this layer.
       for (int j = 0; j < repeat; j++) {
-        std::string l_name      = Form("layer%d", l_num);
-        double      l_thickness = layering.layer(l_num - 1)->thickness(); // Layer's thickness.
-        double      l_dim_x     = tan_hphi * l_pos_z;
-        l_pos_z += l_thickness;
+        if (so_tag == 0) {
+          std::string l_name      = Form("layer%d", l_num);
+          double      l_thickness = layering.layer(l_num - 1)->thickness(); // Layer's thickness.
+          double      l_dim_x     = tan_hphi * l_pos_z;
+          l_pos_z += l_thickness;
 
-        Position   l_pos(0, 0, l_pos_z - l_thickness / 2.); // Position of the layer.
-        double     l_trd_x1 = l_dim_x;
-        double     l_trd_x2 = l_dim_x + l_thickness * tan_hphi;
-        double     l_trd_y1 = l_dim_y;
-        double     l_trd_y2 = l_trd_y1;
-        double     l_trd_z  = l_thickness / 2;
-        Trapezoid  l_shape(l_trd_x1, l_trd_x2, l_trd_y1, l_trd_y2, l_trd_z);
-        Volume     l_vol(l_name, l_shape, air);
-        DetElement layer(sector_det, l_name, det_id);
+          Position   l_pos(0, 0, l_pos_z - l_thickness / 2.); // Position of the layer.
+          double     l_trd_x1 = l_dim_x;
+          double     l_trd_x2 = l_dim_x + l_thickness * tan_hphi;
+          double     l_trd_y1 = l_dim_y;
+          double     l_trd_y2 = l_trd_y1;
+          double     l_trd_z  = l_thickness / 2;
+          Trapezoid  l_shape(l_trd_x1, l_trd_x2, l_trd_y1, l_trd_y2, l_trd_z);
+          Volume     l_vol(l_name, l_shape, air);
+          DetElement layer(sector_det, l_name, det_id);
 
-        //===================================================================
-        //================Jared's=Curiosities================================
-        std::cout<< "l_name = " << l_name << std::endl;
-        std::cout<< "l_thickness = " << l_thickness << std::endl;
-        std::cout<< "l_trd_x1 = " << l_trd_x1 << std::endl;
-        std::cout<< "l_trd_x2 = " << l_trd_x2 << std::endl;
-        std::cout<< "l_trd_y1 = " << l_trd_y1 << std::endl;
-        std::cout<< "l_trd_z = " << l_trd_z << std::endl;
-        std::cout<< " " << std::endl;
-        //===================================================================
-        //===================================================================
+          // Loop over the sublayers or slices for this layer.
+          int    s_num   = 1;
+          double s_pos_z = -(l_thickness / 2.);
+          for (xml_coll_t si(x_layer, _U(slice)); si; ++si) {
+            xml_comp_t  x_slice  = si;
+            std::string s_name   = Form("slice%d", s_num);
+            double      s_thick  = x_slice.thickness();
+            double      s_trd_x1 = l_dim_x + (s_pos_z + l_thickness / 2) * tan_hphi;
+            double      s_trd_x2 = l_dim_x + (s_pos_z + l_thickness / 2 + s_thick) * tan_hphi;
+            double      s_trd_y1 = l_trd_y1;
+            double      s_trd_y2 = s_trd_y1;
+            double      s_trd_z  = s_thick / 2.;
+            Trapezoid   s_shape(s_trd_x1, s_trd_x2, s_trd_y1, s_trd_y2, s_trd_z);
+            Volume      s_vol(s_name, s_shape, desc.material(x_slice.materialStr()));
+            DetElement  slice(layer, s_name, det_id);
+            
+            // build fibers
+            if (x_slice.hasChild(_Unicode(fiber))) {
+              buildFibers_babybcal(desc, sens, s_vol, l_num, x_slice.child(_Unicode(fiber)), {s_trd_x1, s_thick, l_dim_y, hphi});
+            }
 
-        // Loop over the sublayers or slices for this layer.
-        int    s_num   = 1;
-        double s_pos_z = -(l_thickness / 2.);
-        for (xml_coll_t si(x_layer, _U(slice)); si; ++si) {
-          xml_comp_t  x_slice  = si;
-          std::string s_name   = Form("slice%d", s_num);
-          double      s_thick  = x_slice.thickness();
-          double      s_trd_x1 = l_dim_x + (s_pos_z + l_thickness / 2) * tan_hphi;
-          double      s_trd_x2 = l_dim_x + (s_pos_z + l_thickness / 2 + s_thick) * tan_hphi;
-          double      s_trd_y1 = l_trd_y1;
-          double      s_trd_y2 = s_trd_y1;
-          double      s_trd_z  = s_thick / 2.;
-          Trapezoid   s_shape(s_trd_x1, s_trd_x2, s_trd_y1, s_trd_y2, s_trd_z);
-          Volume      s_vol(s_name, s_shape, desc.material(x_slice.materialStr()));
-          DetElement  slice(layer, s_name, det_id);
-          
-          //===================================================================
-          //================Jared's=Curiosities================================
-          std::cout<< "s_name = " << s_name << std::endl;
-          std::cout<< "s_thick = " << s_thick << std::endl;
-          std::cout<< "s_trd_x1 = " << s_trd_x1 << std::endl;
-          std::cout<< "s_trd_x2 = " << s_trd_x2 << std::endl;
-          std::cout<< "s_trd_y1 = " << s_trd_y1 << std::endl;
-          std::cout<< "s_trd_z = " << s_trd_z << std::endl;
-          std::cout<< " " << std::endl;
-          //===================================================================
-          //===================================================================
+            if (x_slice.isSensitive()) {
+              s_vol.setSensitiveDetector(sens);
+            }
+            s_vol.setAttributes(desc, x_slice.regionStr(), x_slice.limitsStr(), x_slice.visStr());
 
-          // build fibers
-          if (x_slice.hasChild(_Unicode(fiber))) {
-            buildFibers_babybcal(desc, sens, s_vol, l_num, x_slice.child(_Unicode(fiber)), {s_trd_x1, s_thick, l_dim_y, hphi});
+            // Slice placement.
+            PlacedVolume slice_phv = l_vol.placeVolume(s_vol, Position(0, 0, s_pos_z + s_thick / 2));
+            slice_phv.addPhysVolID("slice", s_num);
+            slice.setPlacement(slice_phv);
+            // Increment Z position of slice.
+            s_pos_z += s_thick;
+            ++s_num;
           }
 
-          if (x_slice.isSensitive()) {
-            s_vol.setSensitiveDetector(sens);
+          // Set region, limitset, and vis of layer.
+          l_vol.setAttributes(desc, x_layer.regionStr(), x_layer.limitsStr(), x_layer.visStr());
+
+          PlacedVolume layer_phv = mod_vol.placeVolume(l_vol, l_pos);
+          layer_phv.addPhysVolID("layer", l_num);
+          layer.setPlacement(layer_phv);
+          // Increment to next layer Z position. Do not add space_between for the last layer
+          if (j < repeat - 1) {
+            l_pos_z += l_space_between;
           }
-          s_vol.setAttributes(desc, x_slice.regionStr(), x_slice.limitsStr(), x_slice.visStr());
+          ++l_num;
+        } else if (so_tag == 1) {
+          // ================ Scintillator Slab Object ===================
+          std::string l_name = Form("layer%d", l_num);
+          double l_radius = getAttrOrDefault(x_layer, _Unicode(radius), 0.);
+          double l_thickness = getAttrOrDefault(x_layer, _Unicode(thickness), 0.);
+          double l_length = getAttrOrDefault(x_layer, _Unicode(length), 0.);
 
-          // Slice placement.
-          PlacedVolume slice_phv = l_vol.placeVolume(s_vol, Position(0, 0, s_pos_z + s_thick / 2));
-          slice_phv.addPhysVolID("slice", s_num);
-          slice.setPlacement(slice_phv);
-          // Increment Z position of slice.
-          s_pos_z += s_thick;
-          ++s_num;
+          Position   l_pos(0, 0, l_radius - l_thickness / 2.); // Position of the layer.
+          double     l_trd_x1 = l_length;
+          double     l_trd_x2 = l_trd_x1;
+          double     l_trd_y1 = l_length;
+          double     l_trd_y2 = l_trd_y1;
+          double     l_trd_z  = l_thickness;
+          Trapezoid  l_shape(l_trd_x1, l_trd_x2, l_trd_y1, l_trd_y2, l_trd_z);
+          Volume     l_vol(l_name, l_shape, desc.material(x_layer.materialStr()));
+          DetElement layer(sector_det, l_name, det_id);
+
+          // Set region, limitset, and vis of layer.
+          l_vol.setAttributes(desc, x_layer.regionStr(), x_layer.limitsStr(), x_layer.visStr());
+
+          PlacedVolume layer_phv = mod_vol.placeVolume(l_vol, l_pos);
+          layer_phv.addPhysVolID("layer", l_num);
+          layer.setPlacement(layer_phv);
+          ++l_num;
+          // =============================================================
         }
-
-        // Set region, limitset, and vis of layer.
-        l_vol.setAttributes(desc, x_layer.regionStr(), x_layer.limitsStr(), x_layer.visStr());
-
-        PlacedVolume layer_phv = mod_vol.placeVolume(l_vol, l_pos);
-        layer_phv.addPhysVolID("layer", l_num);
-        layer.setPlacement(layer_phv);
-        // Increment to next layer Z position. Do not add space_between for the last layer
-        if (j < repeat - 1) {
-          l_pos_z += l_space_between;
-        }
-        ++l_num;
       }
     }
   }
