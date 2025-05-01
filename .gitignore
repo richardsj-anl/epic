@@ -1,4 +1,3 @@
-!*.png
 
 /*.xml
 *.prim
@@ -53,6 +52,9 @@ _site/
 notes.txt
 install/
 calibrations/
+*.png
+*.hepmc
+*cxx*
 
 G4History.macro
 epic_0000.eps
