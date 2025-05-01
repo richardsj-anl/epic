@@ -140,7 +140,7 @@
         </slice>
       </layer>
 
-      <layer repeat="1" vis="EcalBarrelLayerVis">
+      <layer repeat="6" vis="EcalBarrelLayerVis">
         <slice material="SciFiPb_PbGlue"
           thickness="17*EcalBarrel_FiberZSpacing"
           vis="EcalBarrelFiberLayerVis">
@@ -157,49 +157,14 @@
         </slice>
       </layer>
 
-      <layer repeat="1" vis="EcalBarrelLayerVis">
+      <layer repeat="4" vis="EcalBarrelLayerVis">
         <slice material="SciFiPb_PbGlue"
-          thickness="34*EcalBarrel_FiberZSpacing"
+          thickness="20*EcalBarrel_FiberZSpacing"
           vis="EcalBarrelFiberLayerVis">
           <fiber material="SciFiPb_Scintillator"
             sensitive="yes"
             grid_n_phi="4"
-            grid_dr="4*cm"
-            radius="EcalBarrel_FiberRadius"
-            cladding_thickness="EcalBarrel_CladdingThickness"
-            spacing_x="1.35*mm"
-            spacing_z="1.22*mm"
-            vis="EcalBarrelFiberLayerVis">
-          </fiber>
-        </slice>
-      </layer>
-
-      <layer repeat="1" vis="EcalBarrelLayerVis">
-        <slice material="SciFiPb_PbGlue"
-          thickness="50*EcalBarrel_FiberZSpacing"
-          vis="EcalBarrelFiberLayerVis">
-          <fiber material="SciFiPb_Scintillator"
-            sensitive="yes"
-            grid_n_phi="4"
-            grid_dr="6*cm"
-            radius="EcalBarrel_FiberRadius"
-            cladding_thickness="EcalBarrel_CladdingThickness"
-            spacing_x="1.35*mm"
-            spacing_z="1.22*mm"
-            vis="EcalBarrelFiberLayerVis">
-          </fiber>
-        </slice>
-      </layer>
-
-      <layer repeat="1" vis="EcalBarrelLayerVis"
-          space_before="0">
-        <slice material="SciFiPb_PbGlue"
-          thickness="81*EcalBarrel_FiberZSpacing"
-          vis="EcalBarrelFiberLayerVis">
-          <fiber material="SciFiPb_Scintillator"
-            sensitive="yes"
-            grid_n_phi="4"
-            grid_dr="9.6*cm"
+            grid_dr="2*cm"
             radius="EcalBarrel_FiberRadius"
             cladding_thickness="EcalBarrel_CladdingThickness"
             spacing_x="1.35*mm"
