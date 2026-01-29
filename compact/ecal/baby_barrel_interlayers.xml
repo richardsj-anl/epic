@@ -60,7 +60,7 @@
     <constant name="EcalBarrel_FiberRadius"          value="0.5*mm"/>
     <constant name="EcalBarrel_FiberXSpacing"        value="1.34*mm"/>
     <constant name="EcalBarrel_FiberZSpacing"        value="1.22*mm"/>
-    <constant name="EcalBarrel_CladdingThickness"    value="0.04*mm"/>
+    <constant name="EcalBarrel_CladdingThickness"    value="0.06*mm"/>
     <constant name="EcalBarrel_SpaceBetween"         value="0.1*mm"/>
     <comment>
       For Pb/SiFi (GlueX):  X0 ~ 1.45 cm
@@ -124,8 +124,9 @@
       readout="EcalBabyBarrelScFiHits"
       calorimeterType="EM_BARREL"
       vis="EcalBarrelEnvelopeVis"
-      offsetX="-935*cm"
-      offsetY="0">
+      offsetX="-119.576*cm"
+      offsetY="-3.7*cm"
+      offsetZ="29*cm">
       <dimensions numsides="EcalBarrel_SectorRepeat"
         rmin="65.0*cm"
         z="58*cm"
@@ -150,6 +151,7 @@
             grid_dr="2*cm"
             radius="EcalBarrel_FiberRadius"
             cladding_thickness="EcalBarrel_CladdingThickness"
+            cladding_material="SciFiPb_Scintillator_Cladding"
             spacing_x="1.35*mm"
             spacing_z="1.22*mm"
             vis="EcalBarrelFiberLayerVis">
@@ -167,6 +169,7 @@
             grid_dr="2*cm"
             radius="EcalBarrel_FiberRadius"
             cladding_thickness="EcalBarrel_CladdingThickness"
+            cladding_material="SciFiPb_Scintillator_Cladding"
             spacing_x="1.35*mm"
             spacing_z="1.22*mm"
             vis="EcalBarrelFiberLayerVis">
@@ -182,26 +185,6 @@
           radius = r_desired - 932
       -->
 
-      <layer repeat = "1" vis = "EcalBarrelLayerVis" slabTag = "1"
-          material = "PlasticScint"
-          radius = "-832*cm"
-          length = "50*cm" 
-          thickness = "2.5*cm">
-      </layer>
-
-      <layer repeat = "1" vis = "EcalBarrelLayerVis" slabTag = "1"
-          material = "PlasticScint"
-          radius = "-432*cm"
-          length = "50*cm" 
-          thickness = "1.25*cm">
-      </layer>
-
-      <layer repeat = "1" vis = "EcalBarrelLayerVis" slabTag = "1"
-          material = "PlasticScint"
-          radius = "-32*cm"
-          length = "50*cm" 
-          thickness = "1.25*cm">
-      </layer>
     </detector>
   </detectors>
 

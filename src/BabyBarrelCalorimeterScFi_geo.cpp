@@ -67,6 +67,7 @@ static Ref_t create_detector(Detector& desc, xml_h e, SensitiveDetector sens)
   int         det_id     = x_det.id();
   double      offsetX    = x_det.attr<double>(_Unicode(offsetX));
   double      offsetY    = x_det.attr<double>(_Unicode(offsetY));
+  double      offsetZ    = x_det.attr<double>(_Unicode(offsetZ));
   xml_comp_t  x_dim      = x_det.dimensions();
   int         nsides     = x_dim.numsides();
   int         nsectors   = x_dim.attr<int>(_Unicode(nsectors));
@@ -81,7 +82,8 @@ static Ref_t create_detector(Detector& desc, xml_h e, SensitiveDetector sens)
   Assembly     envelope(det_name);
   // Changed: hphi -> -hphi -> -hphi - (M_PI/2))
   // Added: * RotationY(M_PI/2)
-  Transform3D  tr_global = Translation3D(offsetX, offsetY, 0) * RotationZ(-hphi-(M_PI*0.5));  
+  Transform3D  tr_global = Translation3D(offsetX, offsetY, offsetZ) * RotationZ(-dphi-(M_PI*0.5));  
+  //Transform3D  tr_global = Translation3D(offsetX, offsetY, 0) * RotationZ(-hphi-(M_PI*0.5));  
   PlacedVolume env_phv   = motherVol.placeVolume(envelope, tr_global);
   sens.setType("calorimeter");
 
@@ -241,6 +243,7 @@ void buildFibers_babybcal(Detector& desc, SensitiveDetector& sens, Volume& s_vol
   double      grid_dr                      = getAttrOrDefault(x_fiber, _Unicode(grid_dr), 2.0 * cm);
   std::string f_id_grid                    = getAttrOrDefault<std::string>(x_fiber, _Unicode(identifier_grid), "grid");
   std::string f_id_fiber = getAttrOrDefault<std::string>(x_fiber, _Unicode(identifier_fiber), "fiber");
+  std::string f_cladding_material          = getAttrOrDefault<std::string>(x_fiber, _Unicode(cladding_material), "SciFiPb_Scintillator_Cladding");
 
   // Set up the readout grid for the fiber layers
   // Trapezoid is divided into segments with equal dz and equal number of divisions in x
@@ -252,7 +255,8 @@ void buildFibers_babybcal(Detector& desc, SensitiveDetector& sens, Volume& s_vol
   // fiber and its cladding
   double f_radius_core = f_radius - f_cladding_thickness;
   Tube   f_tube_clad(0, f_radius, s_length);
-  Volume f_vol_clad("fiber_vol", f_tube_clad, desc.material(x_fiber.materialStr()));
+  //Volume f_vol_clad("fiber_vol", f_tube_clad, desc.material(x_fiber.materialStr()));
+  Volume f_vol_clad("fiber_vol", f_tube_clad, desc.material(f_cladding_material));
   Tube   f_tube_core(0, f_radius_core, s_length);
   Volume f_vol_core("fiber_core_vol", f_tube_core, desc.material(x_fiber.materialStr()));
   if (x_fiber.isSensitive()) {

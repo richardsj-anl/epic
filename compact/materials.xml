@@ -493,6 +493,12 @@
       <!--<constant name="BirksConstant" value="0.0*mm/MeV"/>-->
       <!--<constant name="BirksConstant" value="0.126*mm/MeV"/>-->
   </material>
+  <material name="SciFiPb_Scintillator_Cladding">
+    <D type="density" value="1.190" unit="g / cm3"/>
+    <composite n="8" ref="H"/>
+    <composite n="5" ref="C"/>
+    <composite n="2" ref="O"/>
+  </material>
   <material name="SciFiPb_Glue">
     <D type="density" value="1.180" unit="g / cm3"/>
     <fraction n="0.091" ref="H"/>
