@@ -82,7 +82,7 @@ static Ref_t create_detector(Detector& desc, xml_h e, SensitiveDetector sens)
   Assembly     envelope(det_name);
   // Changed: hphi -> -hphi -> -hphi - (M_PI/2))
   // Added: * RotationY(M_PI/2)
-  Transform3D  tr_global = Translation3D(offsetX, offsetY, offsetZ) * RotationZ(-dphi-(M_PI*0.5));  
+  Transform3D  tr_global = Translation3D(offsetX, offsetY, offsetZ) * RotationZ(-hphi-(M_PI*0.5));  
   //Transform3D  tr_global = Translation3D(offsetX, offsetY, 0) * RotationZ(-hphi-(M_PI*0.5));  
   PlacedVolume env_phv   = motherVol.placeVolume(envelope, tr_global);
   sens.setType("calorimeter");
@@ -181,16 +181,57 @@ static Ref_t create_detector(Detector& desc, xml_h e, SensitiveDetector sens)
           double l_radius = getAttrOrDefault(x_layer, _Unicode(radius), 0.);
           double l_thickness = getAttrOrDefault(x_layer, _Unicode(thickness), 0.);
           double l_length = getAttrOrDefault(x_layer, _Unicode(length), 0.);
+          double l_height = getAttrOrDefault(x_layer, _Unicode(height), 0.);
+          l_radius += l_thickness;
+          hphi = 0;
 
           Position   l_pos(0, 0, l_radius - l_thickness / 2.); // Position of the layer.
-          double     l_trd_x1 = l_length;
+          double     l_trd_x1 = l_height/2.;
           double     l_trd_x2 = l_trd_x1;
-          double     l_trd_y1 = l_length;
+          double     l_trd_y1 = l_length/2.;
           double     l_trd_y2 = l_trd_y1;
           double     l_trd_z  = l_thickness;
           Trapezoid  l_shape(l_trd_x1, l_trd_x2, l_trd_y1, l_trd_y2, l_trd_z);
           Volume     l_vol(l_name, l_shape, desc.material(x_layer.materialStr()));
           DetElement layer(sector_det, l_name, det_id);
+
+          // Loop over the sublayers or slices for this layer.
+          int    s_num   = 1;
+          double s_pos_z = -(l_thickness / 2.);
+          for (xml_coll_t si(x_layer, _U(slice)); si; ++si) {
+            xml_comp_t  x_slice  = si;
+            std::string s_name   = Form("slice%d", s_num);
+            double      s_thick  = x_slice.thickness();
+            //double      s_trd_x1 = l_height/2. + (s_pos_z + l_thickness / 2) * tan_hphi;
+            //double      s_trd_x2 = l_height/2. + (s_pos_z + l_thickness / 2 + s_thick) * tan_hphi;
+            double      s_trd_x1 = l_trd_x1;
+            double      s_trd_x2 = s_trd_x1;
+            double      s_trd_y1 = l_trd_y1;
+            double      s_trd_y2 = s_trd_y1;
+            double      s_trd_z  = s_thick / 2.;
+            Trapezoid   s_shape(s_trd_x1, s_trd_x2, s_trd_y1, s_trd_y2, s_trd_z);
+            Volume      s_vol(s_name, s_shape, desc.material(x_slice.materialStr()));
+            DetElement  slice(layer, s_name, det_id);
+            
+            // build fibers
+            if (x_slice.hasChild(_Unicode(fiber))) {
+              buildFibers_babybcal(desc, sens, s_vol, l_num, x_slice.child(_Unicode(fiber)), {s_trd_x1, s_thick, l_trd_y1, hphi});
+            }
+
+            if (x_slice.isSensitive()) {
+              s_vol.setSensitiveDetector(sens);
+            }
+            s_vol.setAttributes(desc, x_slice.regionStr(), x_slice.limitsStr(), x_slice.visStr());
+
+            // Slice placement.
+            PlacedVolume slice_phv = l_vol.placeVolume(s_vol, Position(0, 0, s_pos_z + s_thick / 2));
+            slice_phv.addPhysVolID("slice", s_num);
+            slice.setPlacement(slice_phv);
+            // Increment Z position of slice.
+            s_pos_z += s_thick;
+            ++s_num;
+            hphi = dphi / 2;
+          }
 
           // Set region, limitset, and vis of layer.
           l_vol.setAttributes(desc, x_layer.regionStr(), x_layer.limitsStr(), x_layer.visStr());

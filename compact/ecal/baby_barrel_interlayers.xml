@@ -98,6 +98,28 @@
          EcalBarrel_RadiatorThickness*EcalBarrel_FiberBulkLayers_num)"/>
     <constant name="EcalBarrel_SensitiveLayers_rmax"
         value="EcalBarrel_rmin + EcalBarrel_ImagingPartThickness + EcalBarrel_ScFiPartThickness"/>
+
+    <comment>
+      The fixed radius used to produce the BabyBCal trapezoid in geo.cpp file
+    </comment>
+    <constant name="radiusFixed"
+        value="65.0*cm"/>
+
+    <comment>
+      Adjust values to move prototype around in local coordinates
+    </comment>
+    <constant name="offsetX"
+        value="-175.062*cm"/>
+    <constant name="offsetY"
+        value="0.0*cm"/>
+    <constant name="offsetZ"
+        value="29*cm"/>
+
+    <comment>
+      The spacing between SFILs for BeamTest
+    </comment>
+    <constant name="SFIL_spacing"
+        value="63.5*mm - EcalBarrel_RadiatorThickness "/>
   </define>
 
   <limits>
@@ -117,6 +139,7 @@
       Pb/ScFi Layers of Barrel EM Calorimeter
       ---------------------------------------
     </comment>
+
     <detector
       id="EcalBabyBarrel_ID"
       name="EcalBabyBarrelScFi"
@@ -124,17 +147,23 @@
       readout="EcalBabyBarrelScFiHits"
       calorimeterType="EM_BARREL"
       vis="EcalBarrelEnvelopeVis"
-      offsetX="-119.576*cm"
-      offsetY="-3.7*cm"
-      offsetZ="29*cm">
+      offsetX="offsetX"
+      offsetY="offsetY"
+      offsetZ="offsetZ">
       <dimensions numsides="EcalBarrel_SectorRepeat"
-        rmin="65.0*cm"
+        rmin="radiusFixed"
         z="58*cm"
         nsectors="1"/>
       <sectors vis="EcalBarrelSectorVis"/>
 
+      <comment>
+          ---------------------------------------------------------------------
+                                 Begin Old BabyBCal
+          ---------------------------------------------------------------------
+      </comment>
+
       <layer repeat="1" vis="EcalBarrelSupportVis"
-          space_before="0">
+          space_before="0*mm">
         <slice material="Aluminum"
           thickness="8*mm"
           vis="EcalBarrelFiberLayerVis">
@@ -151,7 +180,6 @@
             grid_dr="2*cm"
             radius="EcalBarrel_FiberRadius"
             cladding_thickness="EcalBarrel_CladdingThickness"
-            cladding_material="SciFiPb_Scintillator_Cladding"
             spacing_x="1.35*mm"
             spacing_z="1.22*mm"
             vis="EcalBarrelFiberLayerVis">
@@ -169,7 +197,6 @@
             grid_dr="2*cm"
             radius="EcalBarrel_FiberRadius"
             cladding_thickness="EcalBarrel_CladdingThickness"
-            cladding_material="SciFiPb_Scintillator_Cladding"
             spacing_x="1.35*mm"
             spacing_z="1.22*mm"
             vis="EcalBarrelFiberLayerVis">
@@ -178,6 +205,104 @@
       </layer>
 
       <support thickness="31.75*mm" material="Aluminum" vis="EcalBarrelSupportVis"/>
+
+      <comment>
+          ---------------------------------------------------------------------
+                                 End Old BabyBCal
+          ---------------------------------------------------------------------
+      </comment>
+
+      <layer repeat="1" vis="EcalBarrelLayerVis" slabTag="1"
+          material="Air"
+          radius="radiusFixed  - 4*(EcalBarrel_RadiatorThickness + SFIL_spacing)"
+          length="54*cm"
+          height="76.2*mm"
+          thickness="17*EcalBarrel_FiberZSpacing">
+        <slice material="SciFiPb_PbGlue"
+          thickness="17*EcalBarrel_FiberZSpacing"
+          vis="EcalBarrelFiberLayerVis">
+          <fiber material="SciFiPb_Scintillator"
+            sensitive="yes"
+            grid_n_phi="4"
+            grid_dr="2*cm"
+            radius="EcalBarrel_FiberRadius"
+            cladding_thickness="EcalBarrel_CladdingThickness"
+            cladding_material="SciFiPb_Scintillator_Cladding"
+            spacing_x="1.35*mm"
+            spacing_z="1.22*mm"
+            vis="EcalBarrelFiberLayerVis">
+          </fiber>
+        </slice>
+      </layer>
+
+      <layer repeat="1" vis="EcalBarrelLayerVis" slabTag="1"
+          material="Air"
+          radius="radiusFixed - 3*(EcalBarrel_RadiatorThickness + SFIL_spacing)"
+          length="54*cm"
+          height="76.2*mm"
+          thickness="17*EcalBarrel_FiberZSpacing">
+        <slice material="SciFiPb_PbGlue"
+          thickness="17*EcalBarrel_FiberZSpacing"
+          vis="EcalBarrelFiberLayerVis">
+          <fiber material="SciFiPb_Scintillator"
+            sensitive="yes"
+            grid_n_phi="4"
+            grid_dr="2*cm"
+            radius="EcalBarrel_FiberRadius"
+            cladding_thickness="EcalBarrel_CladdingThickness"
+            cladding_material="SciFiPb_Scintillator_Cladding"
+            spacing_x="1.35*mm"
+            spacing_z="1.22*mm"
+            vis="EcalBarrelFiberLayerVis">
+          </fiber>
+        </slice>
+      </layer>
+
+      <layer repeat="1" vis="EcalBarrelLayerVis" slabTag="1"
+          material="Air"
+          radius="radiusFixed - 2*(EcalBarrel_RadiatorThickness + SFIL_spacing)"
+          length="54*cm"
+          height="76.2*mm"
+          thickness="17*EcalBarrel_FiberZSpacing">
+        <slice material="SciFiPb_PbGlue"
+          thickness="17*EcalBarrel_FiberZSpacing"
+          vis="EcalBarrelFiberLayerVis">
+          <fiber material="SciFiPb_Scintillator"
+            sensitive="yes"
+            grid_n_phi="4"
+            grid_dr="2*cm"
+            radius="EcalBarrel_FiberRadius"
+            cladding_thickness="EcalBarrel_CladdingThickness"
+            cladding_material="SciFiPb_Scintillator_Cladding"
+            spacing_x="1.35*mm"
+            spacing_z="1.22*mm"
+            vis="EcalBarrelFiberLayerVis">
+          </fiber>
+        </slice>
+      </layer>
+
+      <layer repeat="1" vis="EcalBarrelLayerVis" slabTag="1"
+          material="Air"
+          radius="radiusFixed - 1*(EcalBarrel_RadiatorThickness + SFIL_spacing)"
+          length="54*cm"
+          height="76.2*mm"
+          thickness="17*EcalBarrel_FiberZSpacing">
+        <slice material="SciFiPb_PbGlue"
+          thickness="17*EcalBarrel_FiberZSpacing"
+          vis="EcalBarrelFiberLayerVis">
+          <fiber material="SciFiPb_Scintillator"
+            sensitive="yes"
+            grid_n_phi="4"
+            grid_dr="2*cm"
+            radius="EcalBarrel_FiberRadius"
+            cladding_thickness="EcalBarrel_CladdingThickness"
+            cladding_material="SciFiPb_Scintillator_Cladding"
+            spacing_x="1.35*mm"
+            spacing_z="1.22*mm"
+            vis="EcalBarrelFiberLayerVis">
+          </fiber>
+        </slice>
+      </layer>
 
       <!--
           Place additional material below to avoid changing CellID.
