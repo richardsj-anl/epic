@@ -9,6 +9,7 @@
 #include <DD4hep/Printout.h>
 
 #include <fmt/core.h>
+#include <fmt/format.h>
 
 #include <cstdlib>
 #include <filesystem>
@@ -22,8 +23,10 @@ using dd4hep::ERROR, dd4hep::WARNING, dd4hep::VERBOSE, dd4hep::INFO;
 using dd4hep::printout;
 
 namespace FileLoaderHelper {
-static constexpr const char* const kCommand = "curl --retry 5 --location --fail {0} --output {1}";
-}
+static constexpr const char* const kCurlCommand =
+    "curl --retry 5 --location --fail {0} --output {1}";
+static constexpr const char* const kXrootdCommand = "xrdcp --retry 5 {0} {1}";
+} // namespace FileLoaderHelper
 
 // Function to download files
 inline void EnsureFileFromURLExists(std::string url, std::string file, std::string cache_str = "") {
@@ -58,14 +61,14 @@ inline void EnsureFileFromURLExists(std::string url, std::string file, std::stri
   std::string hash =
       fmt::format("{:016x}", dd4hep::detail::hash64(url)); // TODO: Use c++20 std::fmt
 
-  // create file parent path, if not exists
+  // create file parent path if not exists
   fs::path parent_path = file_path.parent_path();
-  if (!fs::exists(parent_path)) {
-    if (fs::create_directories(parent_path) == false) {
-      printout(ERROR, "FileLoader", "parent path " + parent_path.string() + " cannot be created");
-      printout(ERROR, "FileLoader", "hint: try running 'mkdir -p " + parent_path.string() + "'");
-      std::_Exit(EXIT_FAILURE);
-    }
+  try {
+    fs::create_directories(parent_path); // no-op (returns false) if already exists
+  } catch (const fs::filesystem_error&) {
+    printout(ERROR, "FileLoader", "parent path " + parent_path.string() + " cannot be created");
+    printout(ERROR, "FileLoader", "hint: try running 'mkdir -p " + parent_path.string() + "'");
+    std::exit(EXIT_FAILURE);
   }
 
   // if file exists and is symlink to correct hash
@@ -106,9 +109,22 @@ inline void EnsureFileFromURLExists(std::string url, std::string file, std::stri
               fs::create_symlink(link_target, hash_path);
               success = true;
             } catch (const fs::filesystem_error&) {
-              printout(ERROR, "FileLoader",
-                       "unable to link from " + hash_path.string() + " to " + link_target.string());
-              std::_Exit(EXIT_FAILURE);
+              const bool hash_path_exists = fs::exists(hash_path);
+              if (hash_path_exists && fs::equivalent(hash_path, link_target)) {
+                // Another process created the correct symlink concurrently; that is fine
+                success = true;
+              } else if (hash_path_exists) {
+                printout(ERROR, "FileLoader",
+                         "symlink " + hash_path.string() +
+                             " already exists but points to wrong target");
+                std::exit(EXIT_FAILURE);
+              } else {
+                printout(ERROR, "FileLoader",
+                         "unable to link from " + hash_path.string() + " to " +
+                             link_target.string());
+                printout(ERROR, "FileLoader", "check permissions and retry");
+                std::exit(EXIT_FAILURE);
+              }
             }
             return true;
           }
@@ -131,9 +147,15 @@ inline void EnsureFileFromURLExists(std::string url, std::string file, std::stri
 
   // if hash does not exist, we try to retrieve file from url
   if (!fs::exists(hash_path)) {
-    std::string cmd =
-        fmt::format(FileLoaderHelper::kCommand, url, hash_path.c_str()); // TODO: Use c++20 std::fmt
+    std::string cmd;
+
+    if (url.find("root://") == 0) {
+      cmd = fmt::format(FileLoaderHelper::kXrootdCommand, url, hash_path.c_str());
+    } else {
+      cmd = fmt::format(FileLoaderHelper::kCurlCommand, url, hash_path.c_str());
+    }
     printout(INFO, "FileLoader", "downloading " + file + " as hash " + hash + " with " + cmd);
+
     // run cmd
     auto ret = std::system(cmd.c_str());
     if (!fs::exists(hash_path)) {
@@ -142,22 +164,23 @@ inline void EnsureFileFromURLExists(std::string url, std::string file, std::stri
       printout(ERROR, "FileLoader", "hint: check the command and try running manually");
       printout(ERROR, "FileLoader",
                "hint: allow insecure connections on some systems with the flag -k");
-      std::_Exit(EXIT_FAILURE);
+      std::exit(EXIT_FAILURE);
     }
   }
 
-  // check if file already exists
-  if (fs::exists(file_path)) {
-    // file already exists
-    if (fs::is_symlink(file_path)) {
-      // file is symlink
+  // check if file is symlink
+  if (fs::is_symlink(file_path)) {
+    // file is symlink, i.e. valid symlink
+    if (fs::exists(file_path)) {
+      // file already exists
       fs::path symlink_target = fs::read_symlink(file_path);
       if (fs::exists(symlink_target) && fs::equivalent(hash_path, symlink_target)) {
         // link points to correct path
         return;
       } else {
-        // link points to incorrect path
+        // link points to incorrect path -> remove symlink
         if (fs::remove(file_path) == false) {
+          // failure mode: cannot remove incorrect symlink
           printout(ERROR, "FileLoader", "unable to remove symlink " + file_path.string());
           printout(ERROR, "FileLoader",
                    "we tried to create a symlink " + file_path.string() +
@@ -167,18 +190,27 @@ inline void EnsureFileFromURLExists(std::string url, std::string file, std::stri
                    "hint: this may be resolved by removing directory " + parent_path.string());
           printout(ERROR, "FileLoader",
                    "hint: or in that directory removing the file or link " + file_path.string());
-          std::_Exit(EXIT_FAILURE);
+          std::exit(EXIT_FAILURE);
         }
       }
     } else {
-      // file exists but not symlink
+      // file does not exists, i.e. dead symllink -> remove symlink
+      if (fs::remove(file_path) == false) {
+        // failure mode; cannot remove dead symlink
+        printout(ERROR, "FileLoader", "unable to remove symlink " + file_path.string());
+        std::exit(EXIT_FAILURE);
+      }
+    }
+  } else {
+    if (fs::exists(file_path)) {
+      // failure mode: file exists but not symlink, and we won't remove files
       printout(ERROR, "FileLoader",
                "file " + file_path.string() + " already exists but is not a symlink");
       printout(ERROR, "FileLoader",
                "we tried to create a symlink " + file_path.string() + " to the actual resource, " +
                    "but a file already exists there and we will not remove it automatically");
       printout(ERROR, "FileLoader", "hint: backup the file, remove it manually, and retry");
-      std::_Exit(EXIT_FAILURE);
+      std::exit(EXIT_FAILURE);
     }
   }
   // file_path now does not exist
@@ -188,10 +220,19 @@ inline void EnsureFileFromURLExists(std::string url, std::string file, std::stri
     // use new path from hash so file link is local
     fs::create_symlink(fs::path(hash), file_path);
   } catch (const fs::filesystem_error&) {
-    printout(ERROR, "FileLoader",
-             "unable to link from " + file_path.string() + " to " + hash_path.string());
-    printout(ERROR, "FileLoader", "check permissions and retry");
-    std::_Exit(EXIT_FAILURE);
+    const bool file_path_exists = fs::exists(file_path);
+    if (file_path_exists && fs::equivalent(file_path, hash_path)) {
+      // Another process created the correct symlink concurrently; that is fine
+    } else if (file_path_exists) {
+      printout(ERROR, "FileLoader",
+               "symlink " + file_path.string() + " already exists but points to wrong target");
+      std::exit(EXIT_FAILURE);
+    } else {
+      printout(ERROR, "FileLoader",
+               "unable to link from " + file_path.string() + " to " + hash_path.string());
+      printout(ERROR, "FileLoader", "check permissions and retry");
+      std::exit(EXIT_FAILURE);
+    }
   }
 
   // final check of the file size
@@ -203,6 +244,6 @@ inline void EnsureFileFromURLExists(std::string url, std::string file, std::stri
              "hint: check whether the file " + fs::canonical(file_path).string() +
                  " has any content");
     printout(ERROR, "FileLoader", "hint: check whether the URL " + url + " has any content");
-    std::_Exit(EXIT_FAILURE);
+    std::exit(EXIT_FAILURE);
   }
 }
