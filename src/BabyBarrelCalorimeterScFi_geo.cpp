@@ -71,7 +71,7 @@ static Ref_t create_detector(Detector& desc, xml_h e, SensitiveDetector sens)
   xml_comp_t  x_dim      = x_det.dimensions();
   int         nsides     = x_dim.numsides();
   int         nsectors   = x_dim.attr<int>(_Unicode(nsectors));
-  double      inner_r    = x_dim.rmin();
+  double      inner_r    = x_dim.rmin();  // BeamTest: Z axis;  ePIC: X axis
   double      dphi       = (2 * M_PI / nsides);
   double      hphi       = dphi / 2;
   std::string det_name   = x_det.nameStr();
@@ -82,8 +82,8 @@ static Ref_t create_detector(Detector& desc, xml_h e, SensitiveDetector sens)
   Assembly     envelope(det_name);
   // Changed: hphi -> -hphi -> -hphi - (M_PI/2))
   // Added: * RotationY(M_PI/2)
-  Transform3D  tr_global = Translation3D(offsetX, offsetY, offsetZ) * RotationZ(-hphi-(M_PI*0.5));  
-  //Transform3D  tr_global = Translation3D(offsetX, offsetY, 0) * RotationZ(-hphi-(M_PI*0.5));  
+  Transform3D  tr_global = Translation3D(offsetZ, offsetY, offsetX) * RotationZ(-hphi-(M_PI*0.5));  
+  //Transform3D  tr_global = Translation3D(offsetZ, offsetY, 0) * RotationZ(-hphi-(M_PI*0.5));  
   PlacedVolume env_phv   = motherVol.placeVolume(envelope, tr_global);
   sens.setType("calorimeter");
 
@@ -95,7 +95,7 @@ static Ref_t create_detector(Detector& desc, xml_h e, SensitiveDetector sens)
   Assembly   mod_vol("sector");
 
   // keep tracking of the total thickness
-  double l_pos_z = inner_r;
+  double l_pos_z = inner_r;  // BeamTest: Z axis;  ePIC: X axis
   { // =====  buildBarrelStave(desc, sens, module_volume) =====
     // Parameters for computing the layer X dimension:
     double tan_hphi = std::tan(hphi);
@@ -116,11 +116,11 @@ static Ref_t create_detector(Detector& desc, xml_h e, SensitiveDetector sens)
         if (so_tag == 0) {
           std::string l_name      = Form("layer%d", l_num);
           double      l_thickness = layering.layer(l_num - 1)->thickness(); // Layer's thickness.
-          double      l_dim_x     = tan_hphi * l_pos_z;
+          double      l_dim_x     = tan_hphi * l_pos_z;  // BeamTest: Z axis;  ePIC: X axis
           l_pos_z += l_thickness;
 
           Position   l_pos(0, 0, l_pos_z - l_thickness / 2.); // Position of the layer.
-          double     l_trd_x1 = l_dim_x;
+          double     l_trd_x1 = l_dim_x;  // BeamTest: Z axis;  ePIC: X axis
           double     l_trd_x2 = l_dim_x + l_thickness * tan_hphi;
           double     l_trd_y1 = l_dim_y;
           double     l_trd_y2 = l_trd_y1;
@@ -178,14 +178,18 @@ static Ref_t create_detector(Detector& desc, xml_h e, SensitiveDetector sens)
         } else if (so_tag == 1) {
           // ================ Scintillator Slab Object ===================
           std::string l_name = Form("layer%d", l_num);
-          double l_radius = getAttrOrDefault(x_layer, _Unicode(radius), 0.);
-          double l_thickness = getAttrOrDefault(x_layer, _Unicode(thickness), 0.);
+          //double l_radius = getAttrOrDefault(x_layer, _Unicode(radius), 0.);
           double l_length = getAttrOrDefault(x_layer, _Unicode(length), 0.);
           double l_height = getAttrOrDefault(x_layer, _Unicode(height), 0.);
-          l_radius += l_thickness;
+          double l_thickness = getAttrOrDefault(x_layer, _Unicode(thickness), 0.);
+          double l_relativeZ = getAttrOrDefault(x_layer, _Unicode(relativeZ), 0.);
+          double l_relativeX = getAttrOrDefault(x_layer, _Unicode(relativeX), 0.);
+          double l_relativeY = getAttrOrDefault(x_layer, _Unicode(relativeY), 0.);
+          //l_radius += l_thickness;
           hphi = 0;
 
-          Position   l_pos(0, 0, l_radius - l_thickness / 2.); // Position of the layer.
+          //Position   l_pos(l_relativeY, l_relativeX, l_radius - l_thickness / 2.); // Position of the layer.
+          Position   l_pos(l_relativeY, l_relativeX, l_relativeZ); // Position of the layer.
           double     l_trd_x1 = l_height/2.;
           double     l_trd_x2 = l_trd_x1;
           double     l_trd_y1 = l_length/2.;

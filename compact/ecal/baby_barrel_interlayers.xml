@@ -100,20 +100,55 @@
         value="EcalBarrel_rmin + EcalBarrel_ImagingPartThickness + EcalBarrel_ScFiPartThickness"/>
 
     <comment>
+      ------------------------------------------------------------------------
       The fixed radius used to produce the BabyBCal trapezoid in geo.cpp file
+                    !!!!!!!!!!!Do Not Change!!!!!!!!!!!
+      ------------------------------------------------------------------------
     </comment>
-    <constant name="radiusFixed"
-        value="65.0*cm"/>
+    <constant name="radiusFixed" value="65.0*cm"/>
+    <comment>
+      ------------------------------------------------------------------------
+      ------------------------------------------------------------------------
+    </comment>
 
     <comment>
-      Adjust values to move prototype around in local coordinates
+      -----------------------------------------------------------------
+      Adjust values here to move prototype around in local coordinates
+      -----------------------------------------------------------------
     </comment>
-    <constant name="offsetX"
-        value="-175.062*cm"/>
-    <constant name="offsetY"
-        value="0.0*cm"/>
-    <constant name="offsetZ"
-        value="29*cm"/>
+    <constant name="BBCal_offsetX" value="25.24*cm"/>
+    <constant name="BBCal_Length" value="58*cm"/>
+    <constant name="BBCal_Thickness" value="26.173*cm"/>
+    <constant name="SFIL1_X" value="25.72*cm"/>
+    <constant name="SFIL1_Z" value="56.83*cm"/>
+    <constant name="SFIL1_Length" value="51.91*cm"/>
+    <constant name="SFIL1_Thickness" value="2.22*cm"/>
+    <constant name="SFIL2_X" value="26.67*cm"/>
+    <constant name="SFIL2_Z" value="50.32*cm"/>
+    <constant name="SFIL2_Length" value="50.48*cm"/>
+    <constant name="SFIL2_Thickness" value="2.38*cm"/>
+    <constant name="SFIL3_X" value="27.78*cm"/>
+    <constant name="SFIL3_Z" value="43.82*cm"/>
+    <constant name="SFIL3_Length" value="51.75*cm"/>
+    <constant name="SFIL3_Thickness" value="2.22*cm"/>
+    <constant name="SFIL4_X" value="27.31*cm"/>
+    <constant name="SFIL4_Z" value="37.31*cm"/>
+    <constant name="SFIL4_Length" value="50.48*cm"/>
+    <constant name="SFIL4_Thickness" value="2.22*cm"/>
+    <constant name="SFIL5_X" value="28.58*cm"/>
+    <constant name="SFIL5_Z" value="30.96*cm"/>
+    <constant name="SFIL5_Length" value="50.48*cm"/>
+    <constant name="SFIL5_Thickness" value="2.38*cm"/>
+    <constant name="Paddle_Length" value="2.38*cm"/>
+    <constant name="Paddle_Thickness" value="1.43*cm"/>
+    <constant name="offsetZ" value="-680.000*cm + radiusFixed"/>
+    <constant name="offsetY" value="0.0*mm"/>
+    <constant name="offsetX" value="BBCal_Length/2 + BBCal_offsetX"/>
+    <comment>
+      -----------------------------------------------------------------
+                          End adjusting values
+      -----------------------------------------------------------------
+    </comment>
 
     <comment>
       The spacing between SFILs for BeamTest
@@ -134,6 +169,174 @@
 
   <detectors>
 
+
+    <comment>
+      ---------------------------------------
+      Imaging Layers of Barrel EM Calorimeter
+      ---------------------------------------
+      Silicon (Astropix) readout layers for imaging 3d showers
+    </comment>
+
+    <detector
+      id="EcalBabyBarrelImaging_ID"
+      name="EcalBabyBarrelImaging"
+      type="epic_EcalBabyBarrelImaging"
+      readout="EcalBabyBarrelImagingHits"
+      calorimeterType="EM_BARREL"
+      vis="EcalBarrelEnvelopeVis"
+      offsetX="offsetX"
+      offsetY="offsetY + 1*cm"
+      offsetZ="offsetZ">
+      <dimensions numsides="EcalBarrel_SectorRepeat"
+        rmin="radiusFixed"
+        z="58*cm"
+        nsectors="1"/>
+
+      <sectors vis="EcalBarrelSectorVis"/>
+
+      <module name="AstroPix_Module"
+              vis="EcalBarrelModuleVis">
+        <module_component name="AstroPix_Chip"
+                          material="Silicon"
+                          width="EcalBarrel_AstroPix_width"
+                          length="EcalBarrel_AstroPix_length"
+                          thickness="EcalBarrel_AstroPix_thickness"
+                          vis="EcalBarrelModuleVis">
+          <slice material="Silicon" thickness="EcalBarrel_SiliconThickness"     vis="EcalBarrelSliceVis" sensitive="yes" limits="cal_limits"/>
+          <slice material="Silicon" thickness="EcalBarrel_ElectronicsThickness" vis="EcalBarrelSliceVis"/>
+          <slice material="Copper" thickness="EcalBarrel_CopperThickness"       vis="EcalBarrelSliceVis"/>
+          <slice material="Kapton" thickness="EcalBarrel_KaptonThickness"       vis="EcalBarrelSliceVis"/>
+          <slice material="Epoxy" thickness="EcalBarrel_EpoxyThickness"         vis="EcalBarrelSliceVis"/>
+        </module_component>
+      </module>
+
+      <comment>
+          ---------------------------------------------------------------------
+                                 AstroPix 1
+          ---------------------------------------------------------------------
+      </comment>
+      <comment>
+      <layer repeat="1" vis="EcalBarrelLayerVis"
+             thickness="EcalBarrel_ImagingLayerThickness_WithoutFrame"
+             space_before="-4.5*(EcalBarrel_RadiatorThickness + SFIL_spacing)">
+        <stave repeat="1"
+               width="EcalBarrel_AstroPix_width + 2*EcalBarrel_AstroPix_margin"
+               length="EcalBarrel_AstroPix_length + 2*EcalBarrel_AstroPix_margin"
+               thickness="EcalBarrel_AstroPix_thickness"
+               angle="0*degree"
+               module="AstroPix_Module"
+               vis="EcalBarrelModuleVis"
+               enable="1">
+          <xy_layout
+            dx="EcalBarrel_AstroPix_width + EcalBarrel_AstroPix_margin"
+            dy="EcalBarrel_AstroPix_length + EcalBarrel_AstroPix_margin"
+          />
+        </stave>
+      </layer>
+      </comment>
+
+      <comment>
+          ---------------------------------------------------------------------
+                                 AstroPix 2
+          ---------------------------------------------------------------------
+      </comment>
+      <comment>
+      <layer repeat="1" vis="EcalBarrelLayerVis"
+             thickness="EcalBarrel_ImagingLayerThickness_WithoutFrame"
+             space_before="5.000*cm">
+        <stave repeat="1"
+               width="EcalBarrel_AstroPix_width + 2*EcalBarrel_AstroPix_margin"
+               length="EcalBarrel_AstroPix_length + 2*EcalBarrel_AstroPix_margin"
+               thickness="EcalBarrel_AstroPix_thickness"
+               angle="0*degree"
+               module="AstroPix_Module"
+               vis="EcalBarrelModuleVis"
+               enable="1">
+          <xy_layout
+            dx="EcalBarrel_AstroPix_width + EcalBarrel_AstroPix_margin"
+            dy="EcalBarrel_AstroPix_length + EcalBarrel_AstroPix_margin"
+          />
+        </stave>
+      </layer>
+      </comment>
+
+      <comment>
+          ---------------------------------------------------------------------
+                                 AstroPix 3
+          ---------------------------------------------------------------------
+      </comment>
+      <comment>
+      <layer repeat="1" vis="EcalBarrelLayerVis"
+             thickness="EcalBarrel_ImagingLayerThickness_WithoutFrame"
+             space_before="5.000*cm">
+        <stave repeat="1"
+               width="EcalBarrel_AstroPix_width + 2*EcalBarrel_AstroPix_margin"
+               length="EcalBarrel_AstroPix_length + 2*EcalBarrel_AstroPix_margin"
+               thickness="EcalBarrel_AstroPix_thickness"
+               angle="0*degree"
+               module="AstroPix_Module"
+               vis="EcalBarrelModuleVis"
+               enable="1">
+          <xy_layout
+            dx="EcalBarrel_AstroPix_width + EcalBarrel_AstroPix_margin"
+            dy="EcalBarrel_AstroPix_length + EcalBarrel_AstroPix_margin"
+          />
+        </stave>
+      </layer>
+      </comment>
+
+      <comment>
+          ---------------------------------------------------------------------
+                                 AstroPix 4
+          ---------------------------------------------------------------------
+      </comment>
+      <comment>
+      <layer repeat="1" vis="EcalBarrelLayerVis"
+             thickness="EcalBarrel_ImagingLayerThickness_WithoutFrame"
+             space_before="5.000*cm">
+        <stave repeat="1"
+               width="EcalBarrel_AstroPix_width + 2*EcalBarrel_AstroPix_margin"
+               length="EcalBarrel_AstroPix_length + 2*EcalBarrel_AstroPix_margin"
+               thickness="EcalBarrel_AstroPix_thickness"
+               angle="0*degree"
+               module="AstroPix_Module"
+               vis="EcalBarrelModuleVis"
+               enable="1">
+          <xy_layout
+            dx="EcalBarrel_AstroPix_width + EcalBarrel_AstroPix_margin"
+            dy="EcalBarrel_AstroPix_length + EcalBarrel_AstroPix_margin"
+          />
+        </stave>
+      </layer>
+      </comment>
+
+      <comment>
+          ---------------------------------------------------------------------
+                                 AstroPix 5
+          ---------------------------------------------------------------------
+      </comment>
+      <comment>
+      <layer repeat="1" vis="EcalBarrelLayerVis"
+             thickness="EcalBarrel_ImagingLayerThickness_WithoutFrame"
+             space_before="5.000*cm">
+        <stave repeat="1"
+               width="EcalBarrel_AstroPix_width + 2*EcalBarrel_AstroPix_margin"
+               length="EcalBarrel_AstroPix_length + 2*EcalBarrel_AstroPix_margin"
+               thickness="EcalBarrel_AstroPix_thickness"
+               angle="0*degree"
+               module="AstroPix_Module"
+               vis="EcalBarrelModuleVis"
+               enable="1">
+          <xy_layout
+            dx="EcalBarrel_AstroPix_width + EcalBarrel_AstroPix_margin"
+            dy="EcalBarrel_AstroPix_length + EcalBarrel_AstroPix_margin"
+          />
+        </stave>
+      </layer>
+      </comment>
+
+    </detector>
+
     <comment>
       ---------------------------------------
       Pb/ScFi Layers of Barrel EM Calorimeter
@@ -152,7 +355,7 @@
       offsetZ="offsetZ">
       <dimensions numsides="EcalBarrel_SectorRepeat"
         rmin="radiusFixed"
-        z="58*cm"
+        z="BBCal_Length"
         nsectors="1"/>
       <sectors vis="EcalBarrelSectorVis"/>
 
@@ -212,18 +415,31 @@
           ---------------------------------------------------------------------
       </comment>
 
+      <comment>
+          ---------------------------------------------------------------------
+                                 Begin SFILs
+          ---------------------------------------------------------------------
+      </comment>
+
+      <comment>
+          ---------------------------------------------------------------------
+                                 SFIL 1
+          ---------------------------------------------------------------------
+      </comment>
       <layer repeat="1" vis="EcalBarrelLayerVis" slabTag="1"
           material="Air"
-          radius="radiusFixed  - 4*(EcalBarrel_RadiatorThickness + SFIL_spacing)"
-          length="54*cm"
-          height="76.2*mm"
-          thickness="17*EcalBarrel_FiberZSpacing">
+          length="SFIL1_Length"
+          height="76.2*mm*1"
+          thickness="17*EcalBarrel_FiberZSpacing"
+          relativeZ="radiusFixed + BBCal_Thickness - (SFIL1_Z + SFIL1_Thickness)"
+          relativeX="-(BBCal_Length - SFIL1_Length)/2 - (BBCal_offsetX - SFIL1_X)"
+          relativeY="-0.5*cm">
         <slice material="SciFiPb_PbGlue"
           thickness="17*EcalBarrel_FiberZSpacing"
           vis="EcalBarrelFiberLayerVis">
           <fiber material="SciFiPb_Scintillator"
             sensitive="yes"
-            grid_n_phi="4"
+            grid_n_phi="4*1"
             grid_dr="2*cm"
             radius="EcalBarrel_FiberRadius"
             cladding_thickness="EcalBarrel_CladdingThickness"
@@ -235,18 +451,25 @@
         </slice>
       </layer>
 
+      <comment>
+          ---------------------------------------------------------------------
+                                 SFIL 2
+          ---------------------------------------------------------------------
+      </comment>
       <layer repeat="1" vis="EcalBarrelLayerVis" slabTag="1"
           material="Air"
-          radius="radiusFixed - 3*(EcalBarrel_RadiatorThickness + SFIL_spacing)"
-          length="54*cm"
-          height="76.2*mm"
-          thickness="17*EcalBarrel_FiberZSpacing">
+          length="SFIL2_Length"
+          height="76.2*mm*1"
+          thickness="17*EcalBarrel_FiberZSpacing"
+          relativeZ="radiusFixed + BBCal_Thickness - (SFIL2_Z + SFIL3_Thickness)"
+          relativeX="-(BBCal_Length - SFIL2_Length)/2 - (BBCal_offsetX - SFIL2_X)"
+          relativeY="-0.5*cm">
         <slice material="SciFiPb_PbGlue"
           thickness="17*EcalBarrel_FiberZSpacing"
           vis="EcalBarrelFiberLayerVis">
           <fiber material="SciFiPb_Scintillator"
             sensitive="yes"
-            grid_n_phi="4"
+            grid_n_phi="4*1"
             grid_dr="2*cm"
             radius="EcalBarrel_FiberRadius"
             cladding_thickness="EcalBarrel_CladdingThickness"
@@ -258,18 +481,25 @@
         </slice>
       </layer>
 
+      <comment>
+          ---------------------------------------------------------------------
+                                 SFIL 3
+          ---------------------------------------------------------------------
+      </comment>
       <layer repeat="1" vis="EcalBarrelLayerVis" slabTag="1"
           material="Air"
-          radius="radiusFixed - 2*(EcalBarrel_RadiatorThickness + SFIL_spacing)"
-          length="54*cm"
-          height="76.2*mm"
-          thickness="17*EcalBarrel_FiberZSpacing">
+          length="SFIL3_Length"
+          height="76.2*mm*1"
+          thickness="17*EcalBarrel_FiberZSpacing"
+          relativeZ="radiusFixed + BBCal_Thickness - (SFIL3_Z + SFIL3_Thickness)"
+          relativeX="-(BBCal_Length - SFIL3_Length)/2 - (BBCal_offsetX - SFIL3_X)"
+          relativeY="-0.5*cm">
         <slice material="SciFiPb_PbGlue"
           thickness="17*EcalBarrel_FiberZSpacing"
           vis="EcalBarrelFiberLayerVis">
           <fiber material="SciFiPb_Scintillator"
             sensitive="yes"
-            grid_n_phi="4"
+            grid_n_phi="4*1"
             grid_dr="2*cm"
             radius="EcalBarrel_FiberRadius"
             cladding_thickness="EcalBarrel_CladdingThickness"
@@ -281,18 +511,25 @@
         </slice>
       </layer>
 
+      <comment>
+          ---------------------------------------------------------------------
+                                 SFIL 4
+          ---------------------------------------------------------------------
+      </comment>
       <layer repeat="1" vis="EcalBarrelLayerVis" slabTag="1"
           material="Air"
-          radius="radiusFixed - 1*(EcalBarrel_RadiatorThickness + SFIL_spacing)"
-          length="54*cm"
-          height="76.2*mm"
-          thickness="17*EcalBarrel_FiberZSpacing">
+          length="SFIL4_Length"
+          height="76.2*mm*1"
+          thickness="17*EcalBarrel_FiberZSpacing"
+          relativeZ="radiusFixed + BBCal_Thickness - (SFIL4_Z + SFIL4_Thickness)"
+          relativeX="-(BBCal_Length - SFIL4_Length)/2 - (BBCal_offsetX - SFIL4_X)"
+          relativeY="-0.5*cm">
         <slice material="SciFiPb_PbGlue"
           thickness="17*EcalBarrel_FiberZSpacing"
           vis="EcalBarrelFiberLayerVis">
           <fiber material="SciFiPb_Scintillator"
             sensitive="yes"
-            grid_n_phi="4"
+            grid_n_phi="4*1"
             grid_dr="2*cm"
             radius="EcalBarrel_FiberRadius"
             cladding_thickness="EcalBarrel_CladdingThickness"
@@ -303,6 +540,136 @@
           </fiber>
         </slice>
       </layer>
+
+      <comment>
+          ---------------------------------------------------------------------
+                                 SFIL 5
+          ---------------------------------------------------------------------
+      </comment>
+      <layer repeat="1" vis="EcalBarrelLayerVis" slabTag="1"
+          material="Air"
+          length="SFIL5_Length"
+          height="76.2*mm*1"
+          thickness="17*EcalBarrel_FiberZSpacing"
+          relativeZ="radiusFixed + BBCal_Thickness - (SFIL5_Z + SFIL5_Thickness)"
+          relativeX="-(BBCal_Length - SFIL5_Length)/2 - (BBCal_offsetX - SFIL5_X)"
+          relativeY="-0.5*cm">
+        <slice material="SciFiPb_PbGlue"
+          thickness="17*EcalBarrel_FiberZSpacing"
+          vis="EcalBarrelFiberLayerVis">
+          <fiber material="SciFiPb_Scintillator"
+            sensitive="yes"
+            grid_n_phi="4*1"
+            grid_dr="2*cm"
+            radius="EcalBarrel_FiberRadius"
+            cladding_thickness="EcalBarrel_CladdingThickness"
+            cladding_material="SciFiPb_Scintillator_Cladding"
+            spacing_x="1.35*mm"
+            spacing_z="1.22*mm"
+            vis="EcalBarrelFiberLayerVis">
+          </fiber>
+        </slice>
+      </layer>
+
+      <comment>
+          ---------------------------------------------------------------------
+                                 End SFILs
+          ---------------------------------------------------------------------
+      </comment>
+
+      <comment>
+          ---------------------------------------------------------------------
+                                 Begin Paddles
+          ---------------------------------------------------------------------
+      </comment>
+
+      <comment>
+          ---------------------------------------------------------------------
+                                 Paddle 5 (1)
+          ---------------------------------------------------------------------
+          relativeZ = radiusFixed + BBCal_Thickness - Paddle_Z_Distance
+          relativeX = -(BBCal_Length - Paddle_Length)/2 - (BBCal_X_Distance - Paddle_X_Distance)
+      </comment>
+      <layer repeat="1" vis="EcalBarrelLayerVis" slabTag="1"
+          material="Air"
+          length="Paddle_Length"
+          height="13.7*cm"
+          thickness="Paddle_Thickness"
+          relativeZ="radiusFixed + BBCal_Thickness - (76.68*cm + Paddle_Thickness)"
+          relativeX="-(BBCal_Length - Paddle_Length)/2 - (BBCal_offsetX - 38.1*cm)"
+          relativeY="-0.5*cm">
+        <slice material="SciFiPb_Scintillator"
+          thickness="1.4*cm"
+          sensitive="yes"
+          vis="EcalBarrelFiberLayerVis">
+        </slice>
+      </layer>
+
+      <comment>
+          ---------------------------------------------------------------------
+                                 Paddle 6 (2)
+          ---------------------------------------------------------------------
+      </comment>
+      <layer repeat="1" vis="EcalBarrelLayerVis" slabTag="1"
+          material="Air"
+          length="Paddle_Length"
+          height="13.7*cm"
+          thickness="Paddle_Thickness"
+          relativeZ="radiusFixed + BBCal_Thickness - (64.77*cm + Paddle_Thickness)"
+          relativeX="-(BBCal_Length - Paddle_Length)/2 - (BBCal_offsetX - 47.0*cm)"
+          relativeY="-0.5*cm">
+        <slice material="SciFiPb_Scintillator"
+          thickness="1.4*cm"
+          sensitive="yes"
+          vis="EcalBarrelFiberLayerVis">
+        </slice>
+      </layer>
+
+      <comment>
+          ---------------------------------------------------------------------
+                                 Paddle 3 (3)
+          ---------------------------------------------------------------------
+      </comment>
+      <layer repeat="1" vis="EcalBarrelLayerVis" slabTag="1"
+          material="Air"
+          length="Paddle_Length"
+          height="13.7*cm"
+          thickness="Paddle_Thickness"
+          relativeZ="radiusFixed + BBCal_Thickness - (74.93*cm + Paddle_Thickness)"
+          relativeX="-(BBCal_Length - Paddle_Length)/2 - (BBCal_offsetX - 47.9*cm)"
+          relativeY="-0.5*cm">
+        <slice material="SciFiPb_Scintillator"
+          thickness="1.4*cm"
+          sensitive="yes"
+          vis="EcalBarrelFiberLayerVis">
+        </slice>
+      </layer>
+
+      <comment>
+          ---------------------------------------------------------------------
+                                 Paddle 4 (4)
+          ---------------------------------------------------------------------
+      </comment>
+      <layer repeat="1" vis="EcalBarrelLayerVis" slabTag="1"
+          material="Air"
+          length="Paddle_Length"
+          height="13.7*cm"
+          thickness="Paddle_Thickness"
+          relativeZ="radiusFixed + BBCal_Thickness - (64.93*cm + Paddle_Thickness)"
+          relativeX="-(BBCal_Length - Paddle_Length)/2 - (BBCal_offsetX - 56.8*cm)"
+          relativeY="-0.5*cm">
+        <slice material="SciFiPb_Scintillator"
+          thickness="1.4*cm"
+          sensitive="yes"
+          vis="EcalBarrelFiberLayerVis">
+        </slice>
+      </layer>
+
+      <comment>
+          ---------------------------------------------------------------------
+                                 End Paddles
+          ---------------------------------------------------------------------
+      </comment>
 
       <!--
           Place additional material below to avoid changing CellID.
@@ -311,13 +678,21 @@
       -->
 
     </detector>
+    
   </detectors>
 
   <readouts>
+
+    <readout name="EcalBabyBarrelImagingHits">
+      <segmentation type="CartesianGridXY" grid_size_x="0.5 * mm" grid_size_y="0.5 * mm"/>
+      <id>system:8,sector:6,layer:4,stave:4,module:8,slice:2,x:32:-16,y:-16</id>
+    </readout>
+
     <readout name="EcalBabyBarrelScFiHits">
       <segmentation type="CartesianStripZ" strip_size_x="1.0*cm" identifier_x="z"/>
       <id>system:8,sector:6,layer:6,slice:4,grid:10,fiber:16,z:-14</id>
     </readout>
+
   </readouts>
 
 </lccdd>
