@@ -188,6 +188,7 @@ The unused IDs below are saved for future use.
     <constant name="ECalEndcapPInsert_ID" value="106"/><!-- DEPRECATED -->
     <constant name="EcalEndcapPInsert_ID" value="106"/>
     <constant name="EcalBabyBarrel_ID"    value="107"/>
+    <constant name="EcalBabyBarrelImaging_ID"   value="108"/>
 
     <documentation>
       #### (110-119) Hadronic Calorimeter
