@@ -38,8 +38,8 @@
       These files have only a define tags.
     </documentation>
     <include ref="${DETECTOR_PATH}/compact/fields/beamline_18x275.xml" />
-    <include ref="${DETECTOR_PATH}/compact/far_forward/definitions.xml" />
     <!--
+    <include ref="${DETECTOR_PATH}/compact/far_forward/definitions.xml" />
     <include ref="${DETECTOR_PATH}/compact/far_backward/definitions.xml" />
     -->
     <include ref="${DETECTOR_PATH}/compact/definitions.xml" />
@@ -115,5 +115,10 @@
     ## Central EM calorimetry
   </documentation>
   <include ref="${DETECTOR_PATH}/compact/ecal/baby_barrel_interlayers.xml"/>
+  <!--
+  <include ref="${DETECTOR_PATH}/compact/ecal/baby_barrel_interlayers.xml"/>
+  <include ref="${DETECTOR_PATH}/compact/ecal/baby_barrel_interlayers_Spring2026.xml"/>
+  <include ref="${DETECTOR_PATH}/compact/ecal/baby_barrel_interlayers_Summer2026.xml"/>
+  -->
 
 </lccdd>
