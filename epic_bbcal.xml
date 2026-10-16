@@ -39,7 +39,9 @@
     </documentation>
     <include ref="${DETECTOR_PATH}/compact/fields/beamline_18x275.xml" />
     <include ref="${DETECTOR_PATH}/compact/far_forward/definitions.xml" />
+    <!--
     <include ref="${DETECTOR_PATH}/compact/far_backward/definitions.xml" />
+    -->
     <include ref="${DETECTOR_PATH}/compact/definitions.xml" />
     <include ref="${DD4hepINSTALL}/DDDetectors/compact/detector_types.xml"/>
   </define>
