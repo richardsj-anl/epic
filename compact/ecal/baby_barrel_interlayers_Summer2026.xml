@@ -150,11 +150,6 @@
       -----------------------------------------------------------------
     </comment>
 
-    <comment>
-      The spacing between SFILs for BeamTest
-    </comment>
-    <constant name="SFIL_spacing"
-        value="63.5*mm - EcalBarrel_RadiatorThickness "/>
   </define>
 
   <limits>
@@ -177,6 +172,7 @@
       Silicon (Astropix) readout layers for imaging 3d showers
     </comment>
 
+    <comment>
     <detector
       id="EcalBabyBarrelImaging_ID"
       name="EcalBabyBarrelImaging"
@@ -218,7 +214,7 @@
       <comment>
       <layer repeat="1" vis="EcalBarrelLayerVis"
              thickness="EcalBarrel_ImagingLayerThickness_WithoutFrame"
-             space_before="-4.5*(EcalBarrel_RadiatorThickness + SFIL_spacing)">
+             space_before="5.000*cm">
         <stave repeat="1"
                width="EcalBarrel_AstroPix_width + 2*EcalBarrel_AstroPix_margin"
                length="EcalBarrel_AstroPix_length + 2*EcalBarrel_AstroPix_margin"
@@ -336,6 +332,7 @@
       </comment>
 
     </detector>
+    </comment>
 
     <comment>
       ---------------------------------------

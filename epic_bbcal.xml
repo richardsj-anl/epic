@@ -114,7 +114,7 @@
   <documentation level="10">
     ## Central EM calorimetry
   </documentation>
-  <include ref="${DETECTOR_PATH}/compact/ecal/baby_barrel_interlayers.xml"/>
+  <include ref="${DETECTOR_PATH}/compact/ecal/baby_barrel_interlayers_Spring2026.xml"/>
   <!--
   <include ref="${DETECTOR_PATH}/compact/ecal/baby_barrel_interlayers.xml"/>
   <include ref="${DETECTOR_PATH}/compact/ecal/baby_barrel_interlayers_Spring2026.xml"/>
